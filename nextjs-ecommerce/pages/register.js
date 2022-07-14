@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
-import { useState, useContext } from "react";
+import { useRouter } from "next/router";
+import { useState, useEffect, useContext } from "react";
 
 import { DataContext } from "../store/GlobalState";
 import validate from "../utils/validate";
@@ -11,7 +12,9 @@ const Register = () => {
   const [userData, setUserData] = useState(initialState);
   const { name, email, password, confirmPassword} = userData;
 
-  const [state, dispatch] = useContext(DataContext)
+  const [state, dispatch] = useContext(DataContext);
+  const { auth } = state;
+  const router = useRouter();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -28,8 +31,13 @@ const Register = () => {
     const res = await postData('auth/register', userData)
     if(res.error) return dispatch({ type: 'NOTIFY', payload: {error: res.error} })
     dispatch({ type: 'NOTIFY', payload: {success: res.message} })
-
+    router.push('/signin')
   }
+
+  useEffect(() => {
+    if(Object.keys(auth).length !== 0) router.push("/")
+  }, [auth])
+
   return (
     <div>
       <Head>

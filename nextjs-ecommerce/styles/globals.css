@@ -14,3 +14,9 @@ a {
 * {
   box-sizing: border-box;
 }
+
+img {
+  object-fit: cover
+}
+/* Importing css for animation */
+@import url('./loading.css');
