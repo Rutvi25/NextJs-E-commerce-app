@@ -22,3 +22,8 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
 }
+/* --- Styling for details page --- */
+.detailsPage .img-thumbnail.active {
+  border-color: #ff4500;
+  padding: 2px;
+}

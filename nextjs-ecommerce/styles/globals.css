@@ -16,7 +16,8 @@ a {
 }
 
 img {
-  object-fit: cover
+  object-fit: cover;
+  object-position: 0 30%;
 }
 /* Importing css for animation */
 @import url('./loading.css');
