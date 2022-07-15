@@ -5,9 +5,10 @@ import reducers from './Reducers';
 export const DataContext = createContext()
 
 export const DataProvider = ({children}) => {
-  const initialState = { notify: {}, auth: {} }
-  const [state, dispatch] = useReducer(reducers, initialState)
-  const { auth } = state
+  const initialState = { notify: {}, auth: {}, cart: [] };
+  const [state, dispatch] = useReducer(reducers, initialState);
+  const { cart } = state;
+
   useEffect(() => {
     const firstLogin = localStorage.getItem('firstLogin');
     if(firstLogin) {
@@ -22,7 +23,11 @@ export const DataProvider = ({children}) => {
         })
       })
     }
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('__next__cart01__ecommerce',JSON.stringify(cart))
+  },[art])
   return (
     <DataContext.Provider value={[state, dispatch]}>
       {children}
