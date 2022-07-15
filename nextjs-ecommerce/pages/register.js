@@ -1,11 +1,11 @@
-import Head from "next/head";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useState, useEffect, useContext } from "react";
+import Head from 'next/head';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useState, useEffect, useContext } from 'react';
 
-import { DataContext } from "../store/GlobalState";
-import validate from "../utils/validate";
-import { postData } from "../utils/fetchData";
+import { DataContext } from '../store/GlobalState';
+import validate from '../utils/validate';
+import { postData } from '../utils/fetchData';
 
 const Register = () => {
   const initialState = {name: '', email: '', password: '', confirmPassword: ''}
@@ -35,7 +35,7 @@ const Register = () => {
   }
 
   useEffect(() => {
-    if(Object.keys(auth).length !== 0) router.push("/")
+    if(Object.keys(auth).length !== 0) router.push('/')
   }, [auth])
 
   return (
@@ -43,58 +43,58 @@ const Register = () => {
       <Head>
         <title>Register</title>
       </Head>
-      <form className="mx-auto my-4" style={{ maxWidth: "500px" }} onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmnlfor="name">Name</label>
+      <form className='mx-auto my-4' style={{ maxWidth: '500px' }} onSubmit={handleSubmit}>
+        <div className='form-group'>
+          <label htmnlfor='name'>Name</label>
           <input
-            type="text"
-            className="form-control"
-            id="name"
-            placeholder="Enter Name"
-            name="name" value={name} onChange={handleInputChange}
+            type='text'
+            className='form-control'
+            id='name'
+            placeholder='Enter Name'
+            name='name' value={name} onChange={handleInputChange}
           />
         </div>
-        <div className="form-group">
-          <label htmnlfor="email">Email address</label>
+        <div className='form-group'>
+          <label htmnlfor='email'>Email address</label>
           <input
-            type="email"
-            className="form-control"
-            id="email"
-            aria-describedby="emailHelp"
-            placeholder="Enter email"
-            name="email" value={email} onChange={handleInputChange}
+            type='email'
+            className='form-control'
+            id='email'
+            aria-describedby='emailHelp'
+            placeholder='Enter email'
+            name='email' value={email} onChange={handleInputChange}
           />
-          <small id="emailHelp" className="form-text text-muted">
+          <small id='emailHelp' className='form-text text-muted'>
             We'll never share your email with anyone else.
           </small>
         </div>
-        <div className="form-group">
-          <label htmnlfor="password">Password</label>
+        <div className='form-group'>
+          <label htmnlfor='password'>Password</label>
           <input
-            type="password"
-            className="form-control"
-            id="password"
-            placeholder="Enter Password"
-            name="password" value={password} onChange={handleInputChange}
+            type='password'
+            className='form-control'
+            id='password'
+            placeholder='Enter Password'
+            name='password' value={password} onChange={handleInputChange}
           />
         </div>
-        <div className="form-group">
-          <label htmnlfor="confirmPassword">Confirm Password</label>
+        <div className='form-group'>
+          <label htmnlfor='confirmPassword'>Confirm Password</label>
           <input
-            type="password"
-            className="form-control"
-            id="confirmPassword"
-            placeholder="Enter Password again"
-            name="confirmPassword" value={confirmPassword} onChange={handleInputChange}
+            type='password'
+            className='form-control'
+            id='confirmPassword'
+            placeholder='Enter Password again'
+            name='confirmPassword' value={confirmPassword} onChange={handleInputChange}
           />
         </div>
-        <button type="submit" className="btn btn-dark w-100">
+        <button type='submit' className='btn btn-dark w-100'>
           Register
         </button>
-        <p className="my-2">
+        <p className='my-2'>
           Already have an account?
-          <Link href="/signin">
-            <a style={{ color: "crimson" }}> Login Now</a>
+          <Link href='/signin'>
+            <a style={{ color: 'crimson' }}> Login Now</a>
           </Link>
         </p>
       </form>

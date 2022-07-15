@@ -1,6 +1,6 @@
-import { createContext, useReducer, useEffect } from "react";
-import { getData } from "../utils/fetchData";
-import reducers from "./Reducers";
+import { createContext, useReducer, useEffect } from 'react';
+import { getData } from '../utils/fetchData';
+import reducers from './Reducers';
 
 export const DataContext = createContext()
 

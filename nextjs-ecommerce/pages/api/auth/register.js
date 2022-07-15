@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 
-import connectDB from "../../../utils/connectDB";
+import connectDB from '../../../utils/connectDB';
 import Users from '../../../models/userModel';
 import validate from '../../../utils/validate';
 

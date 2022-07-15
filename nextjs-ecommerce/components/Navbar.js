@@ -52,10 +52,10 @@ const Navbar = () => {
           </li>
           {
             Object.keys(auth).length === 0 
-            ? <li className="nav-item">
-                <Link href="/signin">
-                  <a className={"nav-link" + isActive('/signin')}>
-                    <i className="fas fa-user" aria-hidden="true"></i> Sign in
+            ? <li className='nav-item'>
+                <Link href='/signin'>
+                  <a className={'nav-link' + isActive('/signin')}>
+                    <i className='fas fa-user' aria-hidden='true'></i> Sign in
                   </a>
                 </Link>
               </li>

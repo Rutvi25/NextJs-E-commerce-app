@@ -20,3 +20,5 @@ img {
 }
 /* Importing css for animation */
 @import url('./loading.css');
+/* Importing css for products */
+@import url("./product.css");

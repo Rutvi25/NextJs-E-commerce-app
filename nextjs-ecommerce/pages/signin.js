@@ -1,11 +1,11 @@
-import { useState, useContext, useEffect } from "react";
-import Head from "next/head";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import Cookies from "js-cookie";
+import { useState, useContext, useEffect } from 'react';
+import Head from 'next/head';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import Cookies from 'js-cookie';
 
-import { DataContext } from "../store/GlobalState";
-import { postData } from "../utils/fetchData";
+import { DataContext } from '../store/GlobalState';
+import { postData } from '../utils/fetchData';
 
 const Signin = () => {
   const initialState = { email: '', password: '' }
@@ -49,44 +49,44 @@ const Signin = () => {
       <Head>
         <title>Sign in</title>
       </Head>
-      <form className="mx-auto my-4" style={{ maxWidth: "500px" }} onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmnlfor="email">Email address</label>
+      <form className='mx-auto my-4' style={{ maxWidth: '500px' }} onSubmit={handleSubmit}>
+        <div className='form-group'>
+          <label htmnlfor='email'>Email address</label>
           <input
             required
-            type="email"
-            className="form-control"
-            id="email"
-            aria-describedby="emailHelp"
-            placeholder="Enter email"
-            name="email"
+            type='email'
+            className='form-control'
+            id='email'
+            aria-describedby='emailHelp'
+            placeholder='Enter email'
+            name='email'
             value={email}
             onChange={handleInputChange}
           />
-          <small id="emailHelp" className="form-text text-muted">
+          <small id='emailHelp' className='form-text text-muted'>
             We'll never share your email with anyone else.
           </small>
         </div>
-        <div className="form-group">
-          <label htmnlfor="password">Password</label>
+        <div className='form-group'>
+          <label htmnlfor='password'>Password</label>
           <input
             required
-            type="password"
-            className="form-control"
-            id="password"
-            placeholder="Password"
-            name="password"
+            type='password'
+            className='form-control'
+            id='password'
+            placeholder='Password'
+            name='password'
             value={password}
             onChange={handleInputChange}
           />
         </div>
-        <button type="submit" className="btn btn-dark w-100">
+        <button type='submit' className='btn btn-dark w-100'>
           Login
         </button>
-        <p className="my-2">
+        <p className='my-2'>
           Don't have an account?
-          <Link href="/register">
-            <a style={{ color: "crimson" }}> Register Now</a>
+          <Link href='/register'>
+            <a style={{ color: 'crimson' }}> Register Now</a>
           </Link>
         </p>
       </form>

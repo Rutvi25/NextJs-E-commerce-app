@@ -1,24 +1,24 @@
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
 
-import connectDB from "../../../utils/connectDB";
-import Users from "../../../models/userModel";
-import { createAccessToken } from "../../../utils/generateToken";
+import connectDB from '../../../utils/connectDB';
+import Users from '../../../models/userModel';
+import { createAccessToken } from '../../../utils/generateToken';
 
 connectDB();
 
 export default async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
-    if (!refreshToken) return res.status(400).json({ error: "Login now!" });
+    if (!refreshToken) return res.status(400).json({ error: 'Login now!' });
 
     const result = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
     if (!result)
       return res
         .status(400)
-        .json({ error: "Token is either incorrect or expired!" });
+        .json({ error: 'Token is either incorrect or expired!' });
 
     const user = await Users.findById(result.id);
-    if (!user) return res.status(400).json({ error: "User doesn't exists!" });
+    if (!user) return res.status(400).json({ error: 'User doesn\'t exist!' });
     
     const access_token = createAccessToken({ id: user._id });
     res.json({
