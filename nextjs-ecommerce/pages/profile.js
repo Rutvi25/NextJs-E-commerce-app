@@ -4,6 +4,7 @@ import { DataContext } from '../store/GlobalState';
 
 import validate from '../utils/validate';
 import { patchData } from '../utils/fetchData';
+import { imageUpload } from '../utils/imageUpload';
 
 const Profile = () => {
   const initialState = {
@@ -20,28 +21,71 @@ const Profile = () => {
     if (auth.user) setData({ ...data, name: auth.user.name });
   }, [auth.user]);
   const handleChange = (e) => {
-    const {name, value} = e.target;
-    setData({...data, [name]: value});
-    dispatch({ type: 'NOTIFY', payload: {} })
-  }
+    const { name, value } = e.target;
+    setData({ ...data, [name]: value });
+    dispatch({ type: 'NOTIFY', payload: {} });
+  };
   const handleUpdateProfile = (e) => {
-    e.preventDefault()
-    if(password) {
-      const errorMessage = validate(name, auth.user.email, password, confirmPassword)
-      console.log(errorMessage)
-      if(errorMessage) return dispatch({ type: 'NOTIFY', payload: { error: errorMessage }})
-      updatePassword()
+    e.preventDefault();
+    if (password) {
+      const errorMessage = validate(
+        name,
+        auth.user.email,
+        password,
+        confirmPassword
+      );
+      console.log(errorMessage);
+      if (errorMessage)
+        return dispatch({ type: 'NOTIFY', payload: { error: errorMessage } });
+      updatePassword();
     }
-  }
+    if(name !== auth.user.name || avatar) updateInfo()
+  };
   const updatePassword = () => {
-    dispatch({ type: 'NOTIFY', payload: {loading: true} })
-    patchData('user/resetPassword', {password}, auth.token)
-    .then(res => {
-        console.log(res)
-        if(res.error) return dispatch({ type: 'NOTIFY', payload: {error: res.error} })
-        return dispatch({ type: 'NOTIFY', payload: {success: res.message} })
-    })
+    dispatch({ type: 'NOTIFY', payload: { loading: true } });
+    patchData('user/resetPassword', { password }, auth.token).then((res) => {
+      console.log(res);
+      if (res.error)
+        return dispatch({ type: 'NOTIFY', payload: { error: res.error } });
+      return dispatch({ type: 'NOTIFY', payload: { success: res.message } });
+    });
+  };
+  const changeAvatar = (e) => {
+    const file = e.target.files[0];
+    if (!file)
+      return dispatch({
+        type: 'NOTIFY',
+        payload: { error: 'File does not exist.' },
+      });
+    if (file.size > 1024 * 1024)
+      return dispatch({
+        type: 'NOTIFY',
+        payload: { error: 'The largest image size is 1mb.' },
+      });
+    if (file.type !== 'image/jpeg' && file.type !== 'image/png')
+      return dispatch({
+        type: 'NOTIFY',
+        payload: { error: 'Image format is incorrect.' },
+      });
+    setData({ ...data, avatar: file });
+  };
+  const updateInfo = async () => {
+    let media;
+    dispatch({type: 'NOTIFY', payload: { loading: true }});
+    if(avatar) media = await imageUpload([avatar]);
+    patchData('user', {
+      name, avatar: avatar ? media[0].url : auth.user.avatar
+    }, auth.token).then(res => {
+      if(res.error) return dispatch({type: 'NOTIFY', payload: { error: res.error }});
+      dispatch({type: 'AUTH', payload: {
+        token: auth.token,
+        user: res.user
+      }});
+      return dispatch({type: 'NOTIFY', payload: { success: res.message }})
+    });
+
   }
+
   if (!auth.user) return null;
   return (
     <div className='profile_page'>
@@ -61,7 +105,13 @@ const Profile = () => {
             <span>
               <i className='fas fa-camera'></i>
               <p>Change</p>
-              <input type='file' name='file' id='file_up' accept='image/*' />
+              <input
+                type='file'
+                name='file'
+                id='file_up'
+                accept='image/*'
+                onChange={changeAvatar}
+              />
             </span>
           </div>
           <div className='form-group'>
