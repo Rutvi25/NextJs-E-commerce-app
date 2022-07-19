@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { useContext, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { DataContext } from '../store/GlobalState';
-
 import validate from '../utils/validate';
 import { patchData } from '../utils/fetchData';
 import { imageUpload } from '../utils/imageUpload';
@@ -16,7 +16,7 @@ const Profile = () => {
   const [data, setData] = useState(initialState);
   const { avatar, name, password, confirmPassword } = data;
   const [state, dispatch] = useContext(DataContext);
-  const { auth, notify } = state;
+  const { auth, notify, orders } = state;
   useEffect(() => {
     if (auth.user) setData({ ...data, name: auth.user.name });
   }, [auth.user]);
@@ -39,7 +39,7 @@ const Profile = () => {
         return dispatch({ type: 'NOTIFY', payload: { error: errorMessage } });
       updatePassword();
     }
-    if(name !== auth.user.name || avatar) updateInfo()
+    if (name !== auth.user.name || avatar) updateInfo();
   };
   const updatePassword = () => {
     dispatch({ type: 'NOTIFY', payload: { loading: true } });
@@ -71,20 +71,28 @@ const Profile = () => {
   };
   const updateInfo = async () => {
     let media;
-    dispatch({type: 'NOTIFY', payload: { loading: true }});
-    if(avatar) media = await imageUpload([avatar]);
-    patchData('user', {
-      name, avatar: avatar ? media[0].url : auth.user.avatar
-    }, auth.token).then(res => {
-      if(res.error) return dispatch({type: 'NOTIFY', payload: { error: res.error }});
-      dispatch({type: 'AUTH', payload: {
-        token: auth.token,
-        user: res.user
-      }});
-      return dispatch({type: 'NOTIFY', payload: { success: res.message }})
+    dispatch({ type: 'NOTIFY', payload: { loading: true } });
+    if (avatar) media = await imageUpload([avatar]);
+    patchData(
+      'user',
+      {
+        name,
+        avatar: avatar ? media[0].url : auth.user.avatar,
+      },
+      auth.token
+    ).then((res) => {
+      if (res.error)
+        return dispatch({ type: 'NOTIFY', payload: { error: res.error } });
+      dispatch({
+        type: 'AUTH',
+        payload: {
+          token: auth.token,
+          user: res.user,
+        },
+      });
+      return dispatch({ type: 'NOTIFY', payload: { success: res.message } });
     });
-
-  }
+  };
 
   if (!auth.user) return null;
   return (
@@ -165,8 +173,47 @@ const Profile = () => {
             Update
           </button>
         </div>
-        <div className='col-md-8'>
-          <h3>Orders</h3>
+        <div className='col-md-8 table-responsive '>
+          <h3 className='text-uppercase'>Orders</h3>
+          <div className='my-3'>
+            <table
+              className='table-bordered table-hover w-100 text-uppercase'
+              style={{ minWidth: '600px', cursor: 'pointer' }}
+            >
+              <thead className='bg-light font-weight-bold'>
+                <tr>
+                  <td className='p-2'>id</td>
+                  <td className='p-2'>date</td>
+                  <td className='p-2'>total</td>
+                  <td className='p-2'>delivered</td>
+                  <td className='p-2'>action</td>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((order) => (
+                  <tr key={order._id}>
+                    <td className='p-2'>{order._id}</td>
+                    <td className='p-2'>
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className='p-2'>${order.total}</td>
+                    <td className='p-2'>
+                      {order.delivered ? (
+                        <i className='fas fa-check text-success'></i>
+                      ) : (
+                        <i className='fas fa-times text-danger'></i>
+                      )}
+                    </td>
+                    <td className='p-2'>
+                      <Link href={`/order/${order._id}`}>
+                        <a>details</a>
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
     </div>
