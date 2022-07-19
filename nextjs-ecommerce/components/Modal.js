@@ -6,7 +6,7 @@ import { deleteItem } from '../store/Actions';
 const Modal = () => {
   const [state, dispatch] = useContext(DataContext);
   const { modal } = state;
-  console.log(modal);
+  // console.log(modal);
   const handleSubmit = () => {
     if(modal.length !== 0){
       for(const item of modal){
@@ -15,7 +15,7 @@ const Modal = () => {
         dispatch({ type: 'ADD_MODAL', payload: [] })
       }
     }
-}
+  }
   return (
     <div
       className='modal fade'
