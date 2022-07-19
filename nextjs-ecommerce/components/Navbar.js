@@ -46,7 +46,10 @@ const Navbar = () => {
           <li className='nav-item'>
             <Link href='/cart'>
               <a className={'nav-link' + isActive('/cart')}>
-                <i className='fas fa-shopping-cart position-relative' aria-hidden='true'>
+                <i
+                  className='fas fa-shopping-cart position-relative'
+                  aria-hidden='true'
+                >
                   <span
                     className='position-absolute'
                     style={{
@@ -101,9 +104,9 @@ const Navbar = () => {
                 className='dropdown-menu'
                 aria-labelledby='navbarDropdownMenuLink'
               >
-                <a className='dropdown-item' href='#'>
-                  Profile
-                </a>
+                <Link href='/profile'>
+                  <a className='dropdown-item'>Profile</a>
+                </Link>
                 <button className='dropdown-item' onClick={handleLogout}>
                   Logout
                 </button>
