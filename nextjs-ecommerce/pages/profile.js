@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import { useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
+
 import { DataContext } from '../store/GlobalState';
 import validate from '../utils/validate';
 import { patchData } from '../utils/fetchData';
@@ -17,9 +18,12 @@ const Profile = () => {
   const { avatar, name, password, confirmPassword } = data;
   const [state, dispatch] = useContext(DataContext);
   const { auth, notify, orders } = state;
+  console.log(orders)
+
   useEffect(() => {
     if (auth.user) setData({ ...data, name: auth.user.name });
   }, [auth.user]);
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData({ ...data, [name]: value });
@@ -186,13 +190,17 @@ const Profile = () => {
                   <td className='p-2'>date</td>
                   <td className='p-2'>total</td>
                   <td className='p-2'>delivered</td>
-                  <td className='p-2'>action</td>
+                  <td className='p-2'>paid</td>
                 </tr>
               </thead>
               <tbody>
                 {orders.map((order) => (
                   <tr key={order._id}>
-                    <td className='p-2'>{order._id}</td>
+                    <td className='p-2'>
+                      <Link href={`/order/${order._id}`}>
+                        <a>{order._id}</a>
+                      </Link>
+                    </td>
                     <td className='p-2'>
                       {new Date(order.createdAt).toLocaleDateString()}
                     </td>
@@ -205,9 +213,11 @@ const Profile = () => {
                       )}
                     </td>
                     <td className='p-2'>
-                      <Link href={`/order/${order._id}`}>
-                        <a>details</a>
-                      </Link>
+                      {order.paid ? (
+                        <i className='fas fa-check text-success'></i>
+                      ) : (
+                        <i className='fas fa-times text-danger'></i>
+                      )}
                     </td>
                   </tr>
                 ))}

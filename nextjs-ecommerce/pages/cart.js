@@ -1,54 +1,106 @@
 import Link from 'next/link';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
 
-import PaypalBtn from '../components/PaypalBtn';
+// import PaypalBtn from '../components/PaypalBtn';
 import CartItem from '../components/CartItem';
 import { DataContext } from '../store/GlobalState';
-import { getData } from '../utils/fetchData';
+import { getData, postData } from '../utils/fetchData';
 
 const Cart = () => {
   const [state, dispatch] = useContext(DataContext);
-  const { cart, auth } = state;
+  const { cart, auth, orders } = state;
   const [total, setTotal] = useState(0);
   const [address, setAddress] = useState('');
   const [mobile, setMobile] = useState('');
-  const [payment, setPayment] = useState(false)
+  // const [payment, setPayment] = useState(false);
+  const [callback, setCallback] = useState(false);
+  const router = useRouter()
 
   useEffect(() => {
     const getTotal = () => {
       const res = cart.reduce((prev, item) => {
-        return prev + (item.price * item.quantity)
-      }, 0)
-      setTotal(res)
-    }
-    getTotal()
-  })
+        return prev + item.price * item.quantity;
+      }, 0);
+      setTotal(res);
+    };
+    getTotal();
+  }, [cart]);
   useEffect(() => {
-    const localCart = JSON.parse(localStorage.getItem('__next__cart01__ecommerce'));
-    if(localCart.length > 0) {
-      let newArr = []
+    const localCart = JSON.parse(
+      localStorage.getItem('__next__cart01__ecommerce')
+    );
+    if (localCart.length > 0) {
+      let newArr = [];
       const updateCart = async () => {
         for (const item of localCart) {
           const res = await getData(`product/${item._id}`);
-          const { _id, title, images, price, inStock, sold } = res.product
-          if(inStock > 0) {
-            newArr.push({ 
-              _id, title, images, price, inStock, sold,
-              quantity: item.quantity > inStock ? 1 : item.quantity 
-            })
+          const { _id, title, images, price, inStock, sold } = res.product;
+          if (inStock > 0) {
+            newArr.push({
+              _id,
+              title,
+              images,
+              price,
+              inStock,
+              sold,
+              quantity: item.quantity > inStock ? 1 : item.quantity,
+            });
           }
         }
-        dispatch({ type: 'ADD_CART', payload: newArr })
-      }
-      updateCart()
+        dispatch({ type: 'ADD_CART', payload: newArr });
+      };
+      updateCart();
     }
-  }, []);
+  }, [callback]);
 
-  const handlePayment = () => {
-    if(!address || !mobile) return dispatch({ type: 'NOTIFY', payload: {error: 'Add your address and contact information'}});
-    setPayment(true)
-  }
+  const handlePayment = async () => {
+    if (!address || !mobile)
+      return dispatch({
+        type: 'NOTIFY',
+        payload: { error: 'Add your address and contact information' },
+      });
+    let newCart = [];
+    for (const item of cart) {
+      const res = await getData(`product/${item._id}`)
+      if(res.product.inStock - item.quantity >= 0) {
+        newCart.push(item)
+      }
+    }
+    if(newCart.length < cart.length){
+      setCallback(!callback)
+      return dispatch({ type: 'NOTIFY', payload: {
+        error: 'The product is out of stock or the quantity is insufficient.'
+      }})
+    }
+
+    dispatch({ type: 'NOTIFY', payload: {loading: true} })
+    postData(
+      'order',
+      { address, mobile, cart, total },
+      auth.token
+    ).then((res) => {
+      if (res.error)
+        return dispatch({
+          type: 'NOTIFY',
+          payload: { error: res.error },
+        });
+      dispatch({ type: 'ADD_CART', payload: [] });
+      
+      const newOrder = {
+        ...res.newOrder,
+        user: auth.user
+      }
+      dispatch({ type: 'ADD_ORDERS', payload: [...orders, newOrder] });
+      dispatch({
+        type: 'NOTIFY',
+        payload: { success: res.message },
+      });
+      return router.push(`/order/${res.newOrder._id}`);
+    });
+    // setPayment(true);
+  };
 
   if (cart.length === 0)
     return (
@@ -58,7 +110,7 @@ const Cart = () => {
         alt='empty cart'
       />
     );
-  return (  
+  return (
     <div className='row mx-auto'>
       <Head>
         <title>Cart</title>
@@ -103,15 +155,26 @@ const Cart = () => {
         <h3>
           Total: <span className='text-danger'>${total}</span>
         </h3>
-        {
-          payment
-          ? <PaypalBtn total={total} address={address} mobile={mobile} state={state} dispatch={dispatch} />
-          : <Link href={auth.user ? '#!' : '/signin'}>
-              <a className='btn btn-dark my-2' onClick={handlePayment}>
-                Proceed with payment
-              </a>
-            </Link>
-        }
+        <Link href={auth.user ? '#!' : '/signin'}>
+            <a className='btn btn-dark my-2' onClick={handlePayment}>
+              Proceed with payment
+            </a>
+          </Link>
+        {/* {payment ? (
+          <PaypalBtn
+            total={total}
+            address={address}
+            mobile={mobile}
+            state={state}
+            dispatch={dispatch}
+          />
+        ) : (
+          <Link href={auth.user ? '#!' : '/signin'}>
+            <a className='btn btn-dark my-2' onClick={handlePayment}>
+              Proceed with payment
+            </a>
+          </Link>
+        )} */}
       </div>
     </div>
   );
