@@ -28,11 +28,11 @@ const PaypalBtn = ({ order }) => {
             console.log(
               'Capture result',
               orderData,
-              JSON.stringify(orderData, null, 2)
+              JSON.stringify(orderData, {paymentId: orderData.payer.payer_id}, 2)
             );
             patchData(
               `order/payment/${order._id}`,
-              null,
+              {paymentId: orderData.payer.payer_id},
               auth.token
             ).then((res) => {
               if (res.error)
@@ -47,7 +47,7 @@ const PaypalBtn = ({ order }) => {
               //   user: auth.user
               // }
               dispatch(updateItem(orders, order._id, {
-                ...order, paid: true, dateOfPayment: new Date().toISOString()
+                ...order, paid: true, dateOfPayment: orderData.create_time, paymentId: orderData.payer.payer_id, method: 'Paypal'
               }, 'ADD_ORDERS'));
               return dispatch({
                 type: 'NOTIFY',

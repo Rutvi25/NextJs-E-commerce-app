@@ -25,6 +25,8 @@ const OrderDetails = ({ orderDetail, state, dispatch }) => {
                 : 'Not Delivered'}
             </div>
             <h3>Payment</h3>
+            <h6>Method: {order.method}</h6>
+            <p>paymentId: {order.paymentId}</p>
             <div
               className={`alert ${
                 order.paid ? 'alert-success' : 'alert-danger'
