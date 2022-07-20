@@ -8,7 +8,7 @@ const PaypalBtn = ({ order }) => {
   const [state, dispatch] = useContext(DataContext);
   const { auth, orders } = state;
   useEffect(() => {
-    paypal_sdk
+    paypal
       .Buttons({
         createOrder: function (data, actions) {
           return actions.order.create({

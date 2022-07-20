@@ -11,7 +11,6 @@ export default async (req, res) => {
       break;
   }
 };
-if(!auth.user) return null;
 const orderPayment = async (req, res) => {
   try {
     const result = await auth(req, res);
