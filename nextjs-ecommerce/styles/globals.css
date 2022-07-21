@@ -25,3 +25,5 @@ img {
 @import url("./product.css");
 /* Importing css for profile */
 @import url("./profile.css");
+/* Importing css for productsManager */
+@import url("./productsManager.css");
