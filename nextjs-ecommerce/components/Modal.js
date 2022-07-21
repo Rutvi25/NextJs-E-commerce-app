@@ -19,12 +19,22 @@ const Modal = () => {
       return dispatch({ type: 'NOTIFY', payload: { success: res.message } });
     });
   };
+  const deleteCategories = (item) => {
+    deleteData(`categories/${item.id}`, auth.token)
+    .then(res => {
+        if(res.error) return dispatch({type: 'NOTIFY', payload: {error: res.error}})
+
+        dispatch(deleteItem(item.data, item.id, item.type))
+        return dispatch({type: 'NOTIFY', payload: {success: res.message}})
+    })
+  }
   const handleSubmit = () => {
     if (modal.length !== 0) {
       for (const item of modal) {
         if (item.type === 'ADD_CART')
           dispatch(deleteItem(item.data, item.id, item.type));
         if (item.type === 'ADD_USERS') deleteUser(item)
+        if(item.type === 'ADD_CATEGORIES') deleteCategories(item)
         dispatch({ type: 'ADD_MODAL', payload: [] });
       }
     }

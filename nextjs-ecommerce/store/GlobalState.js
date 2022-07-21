@@ -12,6 +12,7 @@ export const DataProvider = ({ children }) => {
     modal: [],
     orders: [],
     users: [],
+    categories: [],
   };
   const [state, dispatch] = useReducer(reducers, initialState);
   const { cart, auth } = state;
@@ -30,6 +31,14 @@ export const DataProvider = ({ children }) => {
         });
       });
     }
+    getData('categories').then((res) => {
+      if (res.error)
+        return dispatch({ type: 'NOTIFY', payload: { error: res.error } });
+      dispatch({
+        type: 'ADD_CATEGORIES',
+        payload: res.categories,
+      });
+    });
   }, []);
 
   useEffect(() => {
