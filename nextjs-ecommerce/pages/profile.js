@@ -100,7 +100,7 @@ const Profile = () => {
 
   if (!auth.user) return null;
   return (
-    <div className='profile_page'>
+    <div className='profile-page'>
       <Head>
         <title>Profile</title>
       </Head>

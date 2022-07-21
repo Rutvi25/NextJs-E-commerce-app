@@ -23,7 +23,7 @@
   -webkit-line-clamp: 3;
 }
 /* --- Styling for details page --- */
-.detailsPage .img-thumbnail.active {
+.details-page .img-thumbnail.active {
   border-color: #ff4500;
   padding: 2px;
 }
