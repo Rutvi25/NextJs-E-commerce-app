@@ -1,9 +1,10 @@
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { useState, useContext, useEffect } from 'react';
+
 import { DataContext } from '../../store/GlobalState';
 import { imageUpload } from '../../utils/imageUpload';
 import { postData, getData, putData } from '../../utils/fetchData';
-import { useRouter } from 'next/router';
 
 const ProductsManager = () => {
   const initialState = {
@@ -70,7 +71,6 @@ const ProductsManager = () => {
       });
     setImages([...images, ...newImages]);
   };
-
   const deleteImage = (index) => {
     const newArr = [...images];
     newArr.splice(index, 1);
@@ -81,7 +81,7 @@ const ProductsManager = () => {
     if (auth.user.role !== 'admin')
       return dispatch({
         type: 'NOTIFY',
-        payload: { error: 'Authentication is not valid.' },
+        payload: { error: 'Authentication failed' },
       });
     if (
       !title ||
@@ -98,14 +98,14 @@ const ProductsManager = () => {
       });
     dispatch({ type: 'NOTIFY', payload: { loading: true } });
     let media = [];
-    const imgNewURL = images.filter((img) => !img.url);
-    const imgOldURL = images.filter((img) => img.url);
-    if (imgNewURL.length > 0) media = await imageUpload(imgNewURL);
+    const newImgURL = images.filter((img) => !img.url);
+    const oldImgURL = images.filter((img) => img.url);
+    if (newImgURL.length > 0) media = await imageUpload(newImgURL);
     let res;
     if (onEdit) {
       res = await putData(
         `product/${id}`,
-        { ...product, images: [...imgOldURL, ...media] },
+        { ...product, images: [...oldImgURL, ...media] },
         auth.token
       );
       if (res.error)
@@ -113,7 +113,7 @@ const ProductsManager = () => {
     } else {
       res = await postData(
         'product',
-        { ...product, images: [...imgOldURL, ...media] },
+        { ...product, images: [...oldImgURL, ...media] },
         auth.token
       );
       if (res.error)
