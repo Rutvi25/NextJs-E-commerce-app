@@ -1,15 +1,32 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 
 import { getData } from '../utils/fetchData';
 import ProductItem from '../components/product/ProductItem';
 import { DataContext } from '../store/GlobalState';
+import filterSearch from '../utils/filterSearch';
 
 const Home = (props) => {
   const [products, setProducts] = useState(props.products);
   const [checked, setChecked] = useState(false);
+  const [page, setPage] = useState(1);
+  const router = useRouter()
   const [state, dispatch] = useContext(DataContext);
   const { auth } = state;
+
+  useEffect(() => {
+    setProducts(props.products)
+  }, [props.products])
+
+  useEffect(() => {
+    if(Object.keys(router.query).length === 0 ) {
+      setPage(1)
+    } else {
+      setPage(Number(router.query.page))
+    }
+  }, [router.query])
+
   const handleCheck = (id) => {
     products.forEach((product) => {
       if (product._id === id) product.checked = !product.checked;
@@ -26,17 +43,21 @@ const Home = (props) => {
   };
   const handleDeleteAll = () => {
     let deleteArr = [];
-    products.forEach(product => {
-      if(product.checked) {
+    products.forEach((product) => {
+      if (product.checked) {
         deleteArr.push({
           data: '',
           id: product._id,
           title: 'Delete all selected products?',
           type: 'DELETE_PRODUCT',
-        })
+        });
       }
-    })
-    dispatch({type: 'ADD_MODAL', payload: deleteArr})
+    });
+    dispatch({ type: 'ADD_MODAL', payload: deleteArr });
+  };
+  const handleLoadMore = () => {
+    setPage(page + 1)
+    filterSearch({router, page: page+1})
   }
   console.log(products);
   return (
@@ -52,7 +73,7 @@ const Home = (props) => {
           <input
             type='checkbox'
             checked={checked}
-            onClick={handleCheckAll}
+            onChange={handleCheckAll}
             style={{
               width: '25px',
               height: '25px',
@@ -82,12 +103,27 @@ const Home = (props) => {
           ))
         )}
       </div>
+      {
+        props.result < page * 6
+        ? ''
+        : <button className='btn btn-outline-info d-block mx-auto mb-4' onClick={handleLoadMore}>
+          Load more
+        </button>
+      }
     </div>
   );
 };
 
-export const getServerSideProps = async () => {
-  const res = await getData('product');
+export const getServerSideProps = async ({ query }) => {
+  const page = query.page || 1;
+  const category = query.category || 'all';
+  const sort = query.sort || '';
+  const search = query.search || 'all';
+  const res = await getData(
+    `product?limit=${
+      page * 6
+    }&category=${category}&sort=${sort}&title=${search}`
+  );
   console.log(res);
   return {
     props: {
