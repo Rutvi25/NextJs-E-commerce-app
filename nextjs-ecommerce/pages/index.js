@@ -6,6 +6,7 @@ import { getData } from '../utils/fetchData';
 import ProductItem from '../components/product/ProductItem';
 import { DataContext } from '../store/GlobalState';
 import filterSearch from '../utils/filterSearch';
+import Filter from '../components/Filter';
 
 const Home = (props) => {
   const [products, setProducts] = useState(props.products);
@@ -22,8 +23,6 @@ const Home = (props) => {
   useEffect(() => {
     if(Object.keys(router.query).length === 0 ) {
       setPage(1)
-    } else {
-      setPage(Number(router.query.page))
     }
   }, [router.query])
 
@@ -65,6 +64,7 @@ const Home = (props) => {
       <Head>
         <title>Home Page</title>
       </Head>
+      <Filter state={state} />
       {auth.user && auth.user.role === 'admin' && (
         <div
           className='delete-all btn btn-danger mt-2'
